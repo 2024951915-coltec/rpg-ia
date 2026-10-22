@@ -4,11 +4,11 @@
 Para instalar as dependências do Node:
 
 ```
-npm run install
+npm run install-all
 ```
 
 
-Para transpilar o código em TS:
+Para transpilar o código em Typescript para Javascript:
 
 ```
 npm run build

@@ -1,4 +1,5 @@
 dist/
 node_modules/
+public/css/
 package-lock.json
 .env

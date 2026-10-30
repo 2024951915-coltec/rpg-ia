@@ -1,4 +1,7 @@
+#arquivos gerados ao compilar
 dist/
+#arquivos instalados
 node_modules/
 package-lock.json
+#variáveis de ambiente (NÃO PODEM SER EXPOSTAS NO REPOSITÓRIO)
 .env

@@ -4,7 +4,8 @@ import dotenv from 'dotenv';
 dotenv.config({quiet: true});
 
 interface IGameMaster {
-    test: Function
+    /** Testa se a IA está funcional */
+    test(): Promise<boolean>
 }
 
 const AI_API_KEY: string = process.env.GEMINI_API_KEY ?? '';
@@ -16,7 +17,7 @@ const ai: GoogleGenAI = new GoogleGenAI({
 
 /** Gerencia as funções de decisões do Game Master (IA) */
 const GameMaster: IGameMaster = {
-    /** Testa se a IA está funcional */
+
     test: async function (): Promise<boolean> {
         const response = await ai.models.generateContent({
             model: 'gemini-3.5-flash-lite',
@@ -34,10 +35,12 @@ const GameMaster: IGameMaster = {
         });
 
         const j = JSON.parse(response.text ?? '{"functional": "false", "message": "Failed to connect to Gemini"}');
-        console.log("Gemini Test:", j);
+        console.log("Gemini Test:", j.message);
 
         return j.functional;
     }
+
+    
 };
 
 export { GameMaster };

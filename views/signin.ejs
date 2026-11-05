@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-bs-theme="dark">
+    <head>
+        <title>Boulderspire RPG &ndash; Login</title>
+        <%- include('libs/bootstrap.ejs') %>
+        <%- include('libs/jquery.ejs') %>
+
+        <%- include('include/browser-elements.ejs') %>
+    </head>
+
+    <body class="bg-secondary d-flex flex-column justify-content-center align-items-center">
+        <main class="card shadow my-5">
+            <div class="card-header">
+                <h1>Sign-in</h1>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="#">
+                    <div class="mb-3">
+                        <label class="form-label" for="user">
+                            Nome de Usuário <span class="text-danger">*</span>
+                            <small class="text-secondary">(não use seu nome real!)</small>
+                        </label>
+                        <input 
+                            class="form-control"
+                            name="user"
+                            id="user" 
+                            type="text"
+                            no-spellcheck
+                            monospace
+                            required
+                        >
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="pass">
+                            Senha <span class="text-danger">*</span>
+                        </label>
+
+                        <div class="input-group">
+                            <input 
+                                class="form-control"
+                                name="pass"
+                                id="pass" 
+                                type="password"
+                                no-spellcheck
+                                monospace
+                                required
+                            >
+
+                            <button class="btn btn-outline-secondary" type="button" toggle-password="pass"></button>
+                        </div>
+                    </div>
+
+                    <input class="btn btn-outline-success" type="submit" value="Criar conta">
+                </form>
+            </div>
+
+            <div class="card-footer">
+                <small class="text-secondary">Já possui uma conta? <a href="/login">Entre</a></small>
+            </div>
+        </main>
+
+        <%- include('partials/footer') %>
+    </body>
+</html>

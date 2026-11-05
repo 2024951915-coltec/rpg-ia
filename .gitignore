@@ -1,5 +1,7 @@
 #arquivos gerados ao compilar
 dist/
+#arquivos de dados
+db.sqlite
 #arquivos instalados
 node_modules/
 package-lock.json

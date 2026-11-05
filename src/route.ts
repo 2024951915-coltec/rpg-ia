@@ -1,5 +1,6 @@
 import {app} from './models/app.js'
-import rota from './routes/exemplo.route.js'
+import home from './routes/home.route.js';
+import game from './routes/game.route.js';
 
 
 /**
@@ -7,7 +8,8 @@ import rota from './routes/exemplo.route.js'
  */
 function loadroutes(): void
 {
-    app.use('/', rota);
+    app.use('/', home);
+    app.use('/game', game);
 }
 
 export default loadroutes;

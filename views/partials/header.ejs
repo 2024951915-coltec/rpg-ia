@@ -1,0 +1,13 @@
+<header class="navbar navbar-expand-lg bg-dark">
+    <div class="container-fluid px-5 d-flex justify-content-between">
+        <h1 class="navbar-brand">Boulderspire</h1>
+
+        <div>
+            <% if(USER === null) { %>
+            <a class="btn btn-primary" href="/login">Entre<br>para jogar</a>
+            <% } else { %>
+            Olá, <code><%= USER.username %></code>! (<a href="/login">Não é você?</a>)
+            <% } %>
+        </div>
+    </div>
+</header>

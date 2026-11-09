@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-bs-theme="dark">
+    <head>
+        <title>Boulderspire RPG</title>
+
+        <%- include('libs/socketio') %>
+        <%- include('libs/bootstrap') %>
+        <%- include('libs/jquery') %>
+        <%- include('include/browser-elements') %>
+        <link rel="stylesheet" href="/css/character-creation-ui.css">
+    </head>
+
+    <body class="bg-secondary">
+        <%- include('partials/header') %>
+
+        <main class="container-md mt-5">
+            <div class="card shadow-lg" id="character-creation">
+                <div class="card-header">
+                    <h1 class="card-title">
+                        Criar personagem
+                    </h1>
+                </div>
+
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <p>
+                            Antes de iniciar o jogo, você irá criar sua personagem, 
+                            definindo seus Atributos Primários e três Perícias para melhorar.
+                        </p>
+                        <p>Segue abaixo as regras de criação de personagem:</p>
+                        <ol>
+                            <li>
+                                A soma do valor os Atributos Primários deve ser <i>igual</i> a 0. 
+                                Valores maiores ou menores do que isso não serão aceitos.
+                            </li>
+                            <li>
+                                O valor de um Atributo Primário qualquer deve ser entre -5 e +5.
+                                Valores fora desse limite não serão aceitos
+                            </li>
+                            <li>
+                                Você deverá escolher <i>exatamente</i> três Perícias que serão melhorados.
+                            </li>
+                        </ol>
+                    </div>
+
+                    <form>
+                        <div class="mb-3">
+                            
+                        </div>
+
+                        <div class="mb-5 d-flex gap-5 px-5">
+                            <div class="w-100">
+                                <label for="uname" class="form-label">
+                                    Seu nome
+                                </label>
+                                <input name="uname" id="uname"
+                                    class="form-control"
+                                    required
+                                >
+                            </div>
+                            <div class="w-100">
+                                <label for="nome" class="form-label">
+                                    Nome da personagem
+                                </label>
+                                <input name="nome" id="nome"
+                                    class="form-control"
+                                    required
+                                >
+                            </div>
+                        </div>
+
+                        <div class="mb-5 d-flex justify-content-evenly">
+                            <div class="d-flex gap-5">
+                                <div>
+                                    <label for="fca" class="form-label">
+                                        Força <small class="text-secondary">(FCA)</small>
+                                    </label>
+                                    <input name="fca" id="fca"
+                                        class="form-control p-attribute" 
+                                        type=number
+                                        min="-5"
+                                        max="5"
+                                        value="0"
+                                        monospace
+                                        required
+                                    >
+                                </div>
+
+                                <div>
+                                    <label for="agl" class="form-label">
+                                        Agilidade <small class="text-secondary">(AGL)</small>
+                                    </label>
+                                    <input name="agl" id="agl"
+                                        class="form-control p-attribute" 
+                                        type=number
+                                        min="-5"
+                                        max="5"
+                                        value="0"
+                                        monospace
+                                        required
+                                    >
+                                </div>
+
+                                <div>
+                                    <label for="vtl" class="form-label">
+                                        Vitalidade <small class="text-secondary">(VTL)</small>
+                                    </label>
+                                    <input name="vtl" id="vtl"
+                                        class="form-control p-attribute" 
+                                        type=number
+                                        min="-5"
+                                        max="5"
+                                        value="0"
+                                        monospace
+                                        required
+                                    >
+                                </div>
+
+                                <div>
+                                    <label for="int" class="form-label">
+                                        Inteligência <small class="text-secondary">(INT)</small>
+                                    </label>
+                                    <input name="int" id="int"
+                                        class="form-control p-attribute" 
+                                        type=number
+                                        min="-5"
+                                        max="5"
+                                        value="0"
+                                        monospace
+                                        required
+                                    >
+                                </div>
+
+                                <div>
+                                    <label for="scl" class="form-label">
+                                        Sociabilidade <small class="text-secondary">(SCL)</small>
+                                    </label>
+                                    <input name="scl" id="scl"
+                                        class="form-control p-attribute" 
+                                        type=number
+                                        min="-5"
+                                        max="5"
+                                        value="0"
+                                        monospace
+                                        required
+                                    >
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="sum" class="form-label">
+                                    SOMA <small class="text-secondary">(=0)</small>
+                                </label>
+                                <input name="sum" id="sum"
+                                    class="form-control p-attribute sum-field"
+                                    type="number"
+                                    value="0"
+                                    monospace
+                                    disabled
+                                >
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-center">
+                            <input id="btn-create-char" class="btn btn-outline-primary" value="Criar Personagem">
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="d-none" id="nao-me-mostre">
+                Não me mostre
+            </div>
+        </main>
+
+        <%- include('partials/footer') %>
+
+        <script>
+            let $btn_create_char = $('#btn-create-char');
+            let $sum = $('#sum');
+            let $pas = [
+                $('#fca'), 
+                $('#agl'), 
+                $('#vtl'),
+                $('#int'),
+                $('#scl')
+            ]
+
+            function checkPAValidity() 
+            {
+                let sum = 0;
+
+                $pas.forEach($p=>{
+                    sum += parseInt($p.val());
+                })
+                $sum.val(sum);
+
+                if(sum !== 0)
+                {
+                    $sum.addClass('bg-danger');
+                    $btn_create_char.attr('disabled', '');
+                }
+                else
+                {
+                    $sum.removeClass('bg-danger');
+                    $btn_create_char.removeAttr('disabled');
+                }
+            }
+
+            $pas.forEach($pa=>$pa.on('input', checkPAValidity))
+        </script>
+    </body>
+</html>

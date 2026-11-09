@@ -20,11 +20,6 @@ app.use(session({
     saveUninitialized: false
 }))
 
-function auth(req: any, res: any, next: any): void {
-    if(req.session.user !== undefined)
-        next();
-    else res.status(401).render('errors/401');
-}
 /** 
  * Inicializa o servidor 
  */

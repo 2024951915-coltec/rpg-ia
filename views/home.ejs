@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR" data-bs-theme="dark">
+    <head>
+        <title>Boulderspire RPG &ndash; Home</title>
+        <%- include('libs/bootstrap.ejs') %>
+        <%- include('libs/jquery.ejs') %>
+
+        <!--Com esse include vc vai poder usar os atributos clickable e redir-->
+        <!--Eles basicamente fazem qualquer elemento ser clicável e redirecionar para uma página-->
+        <%- include('include/browser-elements.ejs') %>
+    </head>
+
+    
+    <body class="bg-secondary">
+        <%- include('partials/header.ejs') %>
+
+        <main class="container-md mt-5">
+            <div class="mb-5 text-center">
+                <h1>Boulderspire</h1>
+                <h4 class="text-dark">RPG</h4>
+                <p>Escolha como começar sua aventura</p>
+            </div>
+
+            <div class="d-flex justify-content-evenly ">
+                <div class="card shadow h-100" clickable href="/game/host/">
+                    <div class="card-header">
+                        <h3 class="card-title">Criar nova campanha</h1>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Comece uma nova aventura. Um novo mundo a explorar</p>
+                    </div>
+                    <div class="card-footer">
+                        <small class="card-text text-secondary">
+                            (Clique neste bloco)
+                        </small>
+                    </div>
+                </div>
+
+                <div class="card shadow h-100">
+                    <div class="card-header">
+                        <h3 class="card-title">Entrar em campanha</h1>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Entre em uma campanha em andamento</p>
+                        <small class="card-text text-secondary">
+                            (Insira o código da sala abaixo para entrar)
+                        </small>
+                    </div>
+                    <div class="card-footer">
+                        <form method="GET" action="/game/join">
+                            <div class="input-group mb-3">
+                                <input 
+                                    class="form-control fs-3"
+                                    name="room"
+                                    id="room"
+                                    type="text" 
+                                    pattern="[a-fA-F0-9]{6,6}"
+                                    maxlength="6"
+                                    minlength="6"
+                                    placeholder="------"
+                                    no-spellcheck
+                                    monospace
+                                >
+                                <input class="btn btn-outline-success" type="submit" value="Entrar">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <%- include('partials/footer') %>
+    </body>
+</html>

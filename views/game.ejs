@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-bs-theme="dark">
+    <head>
+        <title>Boulderspire RPG</title>
+
+        <%- include('libs/socketio') %>
+        <%- include('libs/bootstrap') %>
+        <%- include('libs/jquery') %>
+        <%- include('include/browser-elements') %>~
+        <script>
+            const roomID = "<%= ROOMID %>" 
+        </script>
+    </head>
+
+    <body class="bg-secondary">
+        <%- include('partials/header') %>
+
+        <main class="container-md mt-5">
+            <%- include('partials/game/char_creation') %>
+        </main>
+
+        <%- include('partials/footer') %>
+    </body>
+</html>

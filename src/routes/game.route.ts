@@ -27,7 +27,7 @@ route.get('/:id', (req: any, res: any)=>{
     if(room === null)
         return res.render('errors/room_not_exists', {ID: id});
 
-    res.render('game');
+    res.render('game', {ROOMID: id});
 })
 
 export default route;

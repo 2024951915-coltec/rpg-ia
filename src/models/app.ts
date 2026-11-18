@@ -1,5 +1,7 @@
 import express from 'express';
 import session from 'express-session';
+import { createServer } from 'node:http';
+import { Server } from 'socket.io';
 
 /** A porta onde o servidor é aberto */
 const PORT = 3000;
@@ -10,6 +12,8 @@ const PORT = 3000;
  * É marcada como ANY, pois o Express é escrito em JS e não possui definições de tipo
  */
 const app: any = express();
+const server = createServer(app);
+const io = new Server(server);
 
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true })); 
@@ -28,7 +32,7 @@ function init(): void {
         res.render('errors/404');
     })
 
-    app.listen(PORT, ()=>{console.log(`http://localhost:${PORT}/`)});
+    server.listen(PORT, ()=>{console.log(`http://localhost:${PORT}/`)});
 }
 
-export {init, app};
+export {init, app, io};

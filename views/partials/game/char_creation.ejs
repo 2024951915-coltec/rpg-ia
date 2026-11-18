@@ -1,0 +1,519 @@
+<style>
+.p-attribute {
+    width: 3em;
+    height: 3em;
+    font-size: 2em;
+}
+
+.sum-field {
+    text-align: right;
+    -moz-appearance: textfield;
+}
+</style>
+
+<div class="card shadow-lg" id="char-creation-card">
+    <div class="card-header">
+        <h1 class="card-title">
+            Criar personagem
+        </h1>
+    </div>
+
+    <div class="card-body">
+        <div id="char-rules" class="alert alert-warning">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1>Aviso</h1>
+                <button class="btn btn-outline-light btn-sm" hide-el="char-rules"></button>
+            </div>
+            <p>
+                Antes de iniciar o jogo, você irá criar sua personagem, 
+                definindo seus Atributos Primários e três Perícias para melhorar.
+            </p>
+            <p>Segue abaixo as regras de criação de personagem:</p>
+            <ol>
+                <li>
+                    A soma do valor os Atributos Primários deve ser <i>igual</i> a 0. 
+                    Valores maiores ou menores do que isso não serão aceitos.
+                </li>
+                <li>
+                    O valor de um Atributo Primário qualquer deve ser entre -5 e +5.
+                    Valores fora desse limite não serão aceitos
+                </li>
+                <li>
+                    Você deverá escolher <i>exatamente</i> três Perícias que serão melhorados.
+                </li>
+            </ol>
+        </div>
+
+        <form id="char-creation-form">
+            <div class="mb-5 d-md-flex gap-5 px-md-5">
+                <div class="w-100">
+                    <label for="uname" class="form-label">
+                        Seu nome
+                    </label>
+                    <input name="uname" id="uname"
+                        class="form-control"
+                        required
+                    >
+                </div>
+                <div class="w-100">
+                    <label for="nome" class="form-label">
+                        Nome da personagem
+                    </label>
+                    <input name="nome" id="nome"
+                        class="form-control"
+                        required
+                    >
+                </div>
+            </div>
+
+            <div class="mb-5 d-flex justify-content-between px-md-5">
+                <h3 class="card-title">Atributos Primários (APs)</h3>
+                <button type="button" class="ms-5 btn btn-outline-light" onclick="resetPAs()">Reiniciar</button>
+            </div>
+            
+            <div class="mb-5 d-flex justify-content-evenly">
+                <div class="d-md-flex gap-5">
+                    <div>
+                        <label for="fca" class="form-label">
+                            Força <small class="text-secondary">(FCA)</small>
+                        </label>
+                        <input name="fca" id="fca"
+                            class="form-control p-attribute" 
+                            type=number
+                            min="-5"
+                            max="5"
+                            value="0"
+                            monospace
+                            required
+                        >
+                    </div>
+
+                    <div>
+                        <label for="agl" class="form-label">
+                            Agilidade <small class="text-secondary">(AGL)</small>
+                        </label>
+                        <input name="agl" id="agl"
+                            class="form-control p-attribute" 
+                            type=number
+                            min="-5"
+                            max="5"
+                            value="0"
+                            monospace
+                            required
+                        >
+                    </div>
+
+                    <div>
+                        <label for="vtl" class="form-label">
+                            Vitalidade <small class="text-secondary">(VTL)</small>
+                        </label>
+                        <input name="vtl" id="vtl"
+                            class="form-control p-attribute" 
+                            type=number
+                            min="-5"
+                            max="5"
+                            value="0"
+                            monospace
+                            required
+                        >
+                    </div>
+
+                    <div>
+                        <label for="int" class="form-label">
+                            Inteligência <small class="text-secondary">(INT)</small>
+                        </label>
+                        <input name="int" id="int"
+                            class="form-control p-attribute" 
+                            type=number
+                            min="-5"
+                            max="5"
+                            value="0"
+                            monospace
+                            required
+                        >
+                    </div>
+
+                    <div>
+                        <label for="scl" class="form-label">
+                            Sociabilidade <small class="text-secondary">(SCL)</small>
+                        </label>
+                        <input name="scl" id="scl"
+                            class="form-control p-attribute" 
+                            type=number
+                            min="-5"
+                            max="5"
+                            value="0"
+                            monospace
+                            required
+                        >
+                    </div>
+                </div>
+
+                <div>
+                    <label for="sum" class="form-label">
+                        <b>SOMA</b> <small class="text-secondary">(=0)</small>
+                    </label>
+                    <input name="sum" id="sum"
+                        class="form-control p-attribute sum-field"
+                        type="number"
+                        value="0"
+                        monospace
+                        disabled
+                    >
+                </div>
+            </div>
+
+            <div class="mb-5 px-md-5">
+                <h3 class="card-title">Perícias</h3>
+                <small class="text-secondary ps-2">Escolha <b>3</b></small>
+
+                <div class="d-md-flex mt-3 mb-5 px-3 gap-5 align-items-top flex-wrap">
+                    <div>
+                        <h5 class="mb-3">Comunicação</h5>
+                        <div class="form-check">
+                            <input id="pers" name="pers" class="form-check-input me-3" type="checkbox" value="" skill="persuasion">
+                            <label for="pers">Persuasão: <span class="skill-val"></span></label>
+                        </div>
+
+                        <div class="form-check">
+                            <input id="inti" name="inti" class="form-check-input me-3" type="checkbox" value="" skill="intimidation">
+                            <label for="inti">Intimidação: <span class="skill-val"></span></label>
+                        </div>
+
+                        <div class="form-check">
+                            <input id="bart" name="bart" class="form-check-input me-3" type="checkbox" value="" skill="barter">
+                            <label for="bart">Barganha: <span class="skill-val"></span></label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h5 class="mb-3">Ar Livre</h5>
+
+                        <div class="form-check">
+                            <input id="camp" name="camp" class="form-check-input me-3" type="checkbox" value="" skill="camping">
+                            <label for="camp">Acampar: <span class="skill-val"></span></label>
+                        </div>
+
+                        <div class="form-check">
+                            <input id="hunt" name="hunt" class="form-check-input me-3" type="checkbox" value="" skill="hunting">
+                            <label for="hunt">Caça: <span class="skill-val"></span></label>
+                        </div>
+
+                        <div class="form-check">
+                            <input id="surv" name="surv" class="form-check-input me-3" type="checkbox" value="" skill="survival">
+                            <label for="surv">Sobrevivência: <span class="skill-val"></span></label>
+                        </div>
+                    </div>
+                    <div>
+                        <h5 class="mb-3">Combate</h5>
+
+                        <div class="form-check">
+                            <input id="blad" name="blad" class="form-check-input me-3" type="checkbox" value="" skill="blade">
+                            <label for="blad">Cortantes: <span class="skill-val"></span></label>
+                        </div>
+
+                        <div class="form-check">
+                            <input id="blun" name="blun" class="form-check-input me-3" type="checkbox" value="" skill="blunt">
+                            <label for="blun">Contundentes: <span class="skill-val"></span></label>
+                        </div>
+
+                        <div class="form-check">
+                            <input id="rang" name="rang" class="form-check-input me-3" type="checkbox" value="" skill="ranged">
+                            <label for="rang">Longo Alcance: <span class="skill-val"></span></label>
+                        </div>
+
+                        <div class="form-check">
+                            <input id="spel" name="spel" class="form-check-input me-3" type="checkbox" value="" skill="spellcasting">
+                            <label for="spel">Feitiçaria: <span class="skill-val"></span></label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h5 class="mb-3">Proteção</h5>
+
+                        <div class="form-check">
+                            <input id="ligh" name="ligh" class="form-check-input me-3" type="checkbox" value="" skill="light_armor">
+                            <label for="ligh">Armadura Leve: <span class="skill-val"></span></label>
+                        </div>
+
+                        <div class="form-check">
+                            <input id="heav" name="heav" class="form-check-input me-3" type="checkbox" value="" skill="heavy_armor">
+                            <label for="heav">Armadura Grossa: <span class="skill-val"></span></label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h5 class="mb-3">Medicina</h5>
+
+                        <div class="form-check">
+                            <input id="firs" name="firs" class="form-check-input me-3" type="checkbox" value="" skill="first-aid">
+                            <label for="firs">Primeiros-Socorros: <span class="skill-val"></span></label>
+                        </div>
+
+                        <div class="form-check">
+                            <input id="rest" name="rest" class="form-check-input me-3" type="checkbox" value="" skill="restoration">
+                            <label for="rest">Restauração: <span class="skill-val"></span></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="d-flex justify-content-center">
+                <input type="submit" id="btn-create-char" class="btn btn-outline-primary" value="Criar Personagem">
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    let $char_creation_form = $('#char-creation-form');
+    let $char_creation_card = $('#char-creation-card');
+    let $btn_create_char = $('#btn-create-char')
+
+    let $sum = $('#sum');
+    let $pas = [
+        $('#fca'), 
+        $('#agl'), 
+        $('#vtl'),
+        $('#int'),
+        $('#scl')
+    ]
+
+    let $skills = [
+        $('#pers'),
+        $('#inti'),
+        $('#bart'),
+
+        $('#camp'),
+        $('#hunt'),
+        $('#surv'),
+
+        $('#blad'),
+        $('#blun'),
+        $('#rang'),
+        $('#spel'),
+
+        $('#ligh'),
+        $('#heav'),
+
+        $('#firs'),
+        $('#rest'),
+    ]
+
+    let total_tagged_skills = 0;
+
+    let disabled_skill_tagging = false;
+    let sum_is_valid = false;
+
+    function recalculateSkillLvl()
+    {
+        let pa = {
+            FCA: parseInt($pas[0].val()),
+            AGL: parseInt($pas[1].val()),
+            VTL: parseInt($pas[2].val()),
+            INT: parseInt($pas[3].val()),
+            SCL: parseInt($pas[4].val()),
+        }
+
+        let svals = [
+            20 + pa.SCL * 2,
+            15 + pa.SCL + pa.FCA * 2,
+            15 + pa.SCL * 3,
+
+            Math.min(18 + pa.INT + pa.VTL * 2, 30),
+            Math.min(18 + pa.INT + pa.AGL * 2, 30),
+            15 + pa.VTL * 3,
+
+            20 + pa.AGL + pa.FCA,
+            Math.max(10 + pa.FCA * 3, 0),
+            15 + pa.AGL * 2,
+            Math.max(10 + pa.INT * 3, 0),
+            
+            20 + pa.AGL + pa.VTL,
+            Math.max(10 + pa.VTL + pa.FCA * 2, 0),
+
+            15 + pa.INT + pa.VTL * 2,
+            Math.max(10 + pa.VTL + pa.INT * 2, 0)
+        ]
+
+        $skills.forEach(($skill, i)=>{
+            let $skill_val_span = $skill.siblings('label').children('.skill-val');
+            let sval = svals[i];
+
+            if($skill.prop('checked') === true)
+            {
+                if(sval <= 5)
+                    sval += 1;
+                else
+                    sval = Math.min(30, Math.floor(sval * 1.15));
+            }
+
+            $skill_val_span.text(sval.toString());
+        })
+    }
+
+    function disableSkillTagging()
+    {
+        $skills.forEach($skill=>{
+            if(!$skill.prop("checked"))
+                $skill.attr('disabled', '');
+        })
+        disabled_skill_tagging = true;
+    }
+
+    function enableSkillTagging()
+    {
+        $skills.forEach($skill=>{
+            $skill.removeAttr('disabled');
+        })
+
+        disabled_skill_tagging = false;
+    }
+
+    function enableSubmit()
+    {
+        $btn_create_char.removeAttr('disabled');
+        $btn_create_char.addClass('btn-outline-primary');
+        $btn_create_char.removeClass('btn-outline-secondary');
+    }
+
+    function disableSubmit()
+    {
+        $btn_create_char.attr('disabled', '');
+        $btn_create_char.removeClass('btn-outline-primary');
+        $btn_create_char.addClass('btn-outline-secondary');
+    }
+
+    function checkPAValidity() 
+    {
+        let sum = 0;
+
+        $pas.forEach($p=>{
+            sum += parseInt($p.val());
+        })
+        $sum.val(sum);
+
+        if(sum !== 0)
+        {
+            $sum.addClass('bg-danger');
+            disableSubmit();
+            sum_is_valid = false;
+        }
+        else
+        {
+            $sum.removeClass('bg-danger');
+            if(disabled_skill_tagging)
+                enableSubmit();
+            sum_is_valid = true;
+        }
+
+        recalculateSkillLvl();
+    }
+
+    $pas.forEach($pa=>$pa.on('input', checkPAValidity))
+
+    function resetPAs()
+    {
+        $pas.forEach(($pa)=>{
+            $pa.val(0);
+        })
+
+        $skills.forEach(($skill)=>{
+            $skill.prop('checked', false);
+        })
+
+        total_tagged_skills = 0;
+        enableSkillTagging();
+        checkPAValidity();
+    }
+
+    $skills.forEach($skill=>{
+
+        if($skill.prop('checked'))
+            total_tagged_skills ++;
+        
+        if(total_tagged_skills === 3)
+            disableSkillTagging();
+
+        $skill.on('change',()=>{
+            let tagged = $skill.prop('checked')
+            recalculateSkillLvl();
+
+            if(tagged)
+            {
+                total_tagged_skills ++;
+
+                if(total_tagged_skills === 3)
+                {
+                    disableSkillTagging();
+
+                    if(sum_is_valid)
+                        enableSubmit();
+                }
+            }
+            else
+            {
+                if(total_tagged_skills === 3)
+                    enableSkillTagging();
+
+                total_tagged_skills --;
+
+                disableSubmit();
+            }
+        })   
+    })
+
+    $char_creation_form.on('submit',(e)=>{
+        e.preventDefault();
+
+        let transl_skill_name = {
+            pers: 'persuasion',
+            inti: 'intimidation',
+            bart: 'barter',
+
+            camp: 'camping',
+            hunt: 'hunting',
+            surv: 'survival',
+
+            blad: 'blade',
+            blun: 'blunt',
+            rang: 'ranged',
+            spel: 'spellcasting',
+
+            ligh: 'light_armor',
+            heav: 'heavy_armor',
+
+            firs: 'first_aid',
+            rest: 'restoration'
+        }
+
+        let transl_pa_name = {
+            fca: 'FCA',
+            scl: 'SCL',
+            agl: 'AGL',
+            int: 'INT',
+            vtl: 'VTL'
+        }
+
+        let form_data = $char_creation_form.serializeArray();
+        let char_info = { room: roomID, tagged_skills: [], pas: {} };
+
+        form_data.forEach(data=>{
+            let val = data.value;
+            let nam = data.name;
+
+            if(transl_pa_name[nam] !== undefined)
+                char_info.pas[transl_pa_name[nam]] = parseInt(val);
+            else if(transl_skill_name[nam] !== undefined)
+                char_info.tagged_skills.push(transl_skill_name[nam]);
+            else
+                char_info[nam] = val;
+        })
+
+        socket.emit('create-char', char_info);
+    })
+
+    recalculateSkillLvl();
+    disableSubmit();
+</script>

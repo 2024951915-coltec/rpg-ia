@@ -13,9 +13,11 @@
 }
 
 textarea[monospace] {
-    font-family: 'Courier New', Courier, monospace
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 600;
 }
 
 input[type=text][monospace] {
-    font-family: 'Courier New', Courier, monospace
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 600;
 }

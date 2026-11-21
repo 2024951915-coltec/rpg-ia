@@ -8,24 +8,29 @@ route.get('/host', (req: any, res: any)=>{
 })
 
 route.post('/host', (req: any, res: any)=>{
-    const { name } = req.body;
+    const { name, desc } = req.body;
 
-    const room_tuple: [string, IRoom] = rooms.add(name);
+    const room_tuple: [string, IRoom] = rooms.add(name, desc);
 
     res.redirect('/game/' + room_tuple[0]);
 })
 
 route.get('/join', (req: any, res: any)=>{
-    res.redirect('/game/' + req.query.room)
+    const {room} = req.query;
+
+    const r: IRoom | null = rooms.get(room);
+
+    if(r === null)
+        return res.status(404).render('errors/room_not_exists', {ID: room})
+
+    if(!rooms.isRunning(room))
+        return res.redirect('/game/' + room)
+    else
+        return res.status(403).render('errors/game_in_session', {ID: room});
 })
 
 route.get('/:id', (req: any, res: any)=>{
     const { id } = req.params;
-
-    const room: IRoom | null = rooms.get(id);
-
-    if(room === null)
-        return res.render('errors/room_not_exists', {ID: id});
 
     res.render('game', {ROOMID: id});
 })

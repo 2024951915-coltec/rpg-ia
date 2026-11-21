@@ -9,7 +9,7 @@ $(()=>{
 
         if($el.attr('href') === undefined)
         {
-            if($el.attr('onclick') == undefined)
+            if($el.attr('onclick') === undefined)
                 $el.removeAttr('clickable');
         }
         else

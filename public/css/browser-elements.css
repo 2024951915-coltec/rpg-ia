@@ -8,6 +8,10 @@
     transition: top ease-in 300ms
 }
 
+[scrollable] {
+    overflow-y: scroll;
+}
+
 [clickable]:hover {
     top: -0.3em;
 }

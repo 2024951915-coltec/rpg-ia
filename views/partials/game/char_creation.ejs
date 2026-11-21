@@ -267,6 +267,8 @@
 </div>
 
 <script>
+    let chari;
+
     let $char_creation_form = $('#char-creation-form');
     let $char_creation_card = $('#char-creation-card');
     let $btn_create_char = $('#btn-create-char')
@@ -497,7 +499,7 @@
         }
 
         let form_data = $char_creation_form.serializeArray();
-        let char_info = { room: roomID, tagged_skills: [], pas: {} };
+        let char_info = { tagged_skills: [], pas: {}, room_id: roomID};
 
         form_data.forEach(data=>{
             let val = data.value;
@@ -511,7 +513,11 @@
                 char_info[nam] = val;
         })
 
+        chari = char_info;
+
         socket.emit('create-char', char_info);
+
+        $char_creation_card.addClass('d-none');
     })
 
     recalculateSkillLvl();

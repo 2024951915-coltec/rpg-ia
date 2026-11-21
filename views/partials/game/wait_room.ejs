@@ -1,0 +1,57 @@
+<div class="card shadow-lg d-none" id="wait-room">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h1>Sala de espera</h1>
+        <h2 class="text-secondary">Sala: #<code><%= ROOMID %></code> </h2>
+    </div>
+    <div class="card-body px-md-5">
+        <h2 class="card-title mb-3">Lista de jogadores: </h2>
+        <ol class="list-group mb-3" id="guest-list"></ol>
+        <p id="last-guest"></p>
+    </div>
+    <div class="card-footer d-flex justify-content-between px-md-5">
+        <button class="btn btn-outline-success" onclick="startGame()">Iniciar jogo</button>
+        <button class="btn btn-outline-danger">Sair do jogo</button>
+    </div>
+</div>
+
+<script>
+    let player_names = [];
+    let player_info = [];
+    let my_turn;
+    let $wait_room = $('#wait-room');
+    let $guest_list = $('#guest-list');
+    let $last_guest = $('#last-guest');
+
+    socket.on('created-char', (info)=>{
+        $wait_room.removeClass('d-none');
+
+        info.player_names.forEach((player, i)=>{
+            let $guest_list_item = $('<li class="list-group-item"></li>')
+            $guest_list_item.html(`<code>@${player}</code>`);
+
+            $guest_list.append($guest_list_item);
+            if(player === info.username)
+                my_turn = i;
+        })
+
+        player_info = info.player_info;
+        player_names = info.player_names;
+    })
+
+    socket.on('player-joined', (info)=>{
+        $last_guest.html(`<code>@${info.username}</code> entrou na sala!`)
+
+        let $guest_list_item = $('<li class="list-group-item"></li>')
+        $guest_list_item.html(`<code>@${info.username}</code>`);
+
+        $guest_list.append($guest_list_item);
+
+        player_info.push(info.char);
+        player_names.push(info.username);
+    })
+
+    function startGame()
+    {
+        socket.emit('start-game');
+    }
+</script>

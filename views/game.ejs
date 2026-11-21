@@ -3,20 +3,23 @@
     <head>
         <title>Boulderspire RPG</title>
 
-        <%- include('libs/socketio') %>
-        <%- include('libs/bootstrap') %>
-        <%- include('libs/jquery') %>
-        <%- include('include/browser-elements') %>~
         <script>
             const roomID = "<%= ROOMID %>" 
         </script>
+
+        <%- include('libs/socketio') %>
+        <%- include('libs/bootstrap') %>
+        <%- include('libs/jquery') %>
+        <%- include('include/browser-elements') %>
     </head>
 
     <body class="bg-secondary">
         <%- include('partials/header') %>
 
-        <main class="container-md mt-5">
+        <main class="container-md mt-5 h-100">
             <%- include('partials/game/char_creation') %>
+            <%- include('partials/game/wait_room') %>
+            <%- include('partials/game/game_panel') %>
         </main>
 
         <%- include('partials/footer') %>

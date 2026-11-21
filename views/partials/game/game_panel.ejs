@@ -1,0 +1,245 @@
+<div class="gap-3 d-none vh-100" id="game-panel">
+    <div>
+        <div class="d-none d-md-block card h-50" id="pc-player-panel">
+            <!--PC-->
+            <div class="card-header">
+            <h1>Lista de jogadores</h1>
+            </div>
+
+            <div class="card-body overflow-auto h-75 player-list list-group-flush"></div>
+        </div>
+
+        <div class="d-md-none fixed-top">
+            <!--Mobile-->
+            <button class="btn btn-dark mt-5" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-mobile">
+                Jogadores
+            </button>
+            <div class="collapse multi-collapse" id="collapse-mobile">
+                <div class="card-body overflow-auto h-75 player-list list-group-flush"></div>
+            </div>
+        </div>
+
+        <p class="card card-body my-3">
+            A IA pode levar tempo para 
+            responder. Isso é normal e esperado,
+            apenas aguarde a resposta.
+        </p>
+    </div>
+
+    <div class="card w-100 h-75">
+        <div class="card-header">
+            <h1>Jogo</h1>
+        </div>
+        <div class="card-body overflow-auto" id="game-logs"></div>
+    </div>
+</div>
+
+
+<script>
+    let turn = 0;
+    let $game_panel = $('#game-panel');
+    let $game_logs = $('#game-logs');
+    let has_started = false;
+
+    console.log($game_logs.attr('class'));
+
+    socket.on('game-started', (conflict)=>{;
+        if(has_started) return;
+
+        $game_panel.removeClass('d-none');
+        $game_panel.addClass('d-md-flex');
+        $wait_room.addClass('d-none');
+        logConflict(conflict, null);
+        has_started = true;
+
+        $(`div.player-list`).each((i, e)=>{
+            $el = $(e);
+
+            console.log(i);
+
+            let tsn = {
+                persuasion: "Persuasão",
+                intimidation: "Intimidação",
+                barter: "Barganha",
+                camping: "Acampar",
+                hunting: "Caçar",
+                survival: "Sobrevivência",
+                blade: 'Lâminas',
+                blunt: 'Contundentes',
+                ranged: 'Longa Distância',
+                light_armor: 'Armadura Leve',
+                heavy_armor: 'Armadura Pesada',
+                spellcasting: 'Feitiçaria',
+                first_aid: 'Primeiros Socorros',
+                restoration: 'Restauração',
+            }
+
+            let $pl = $('<ol class="list-group list-group-flush"></ol>')
+
+            player_names.forEach((name, pi)=>{
+                let p_info = player_info[pi];
+
+                let $pli = $(`<button class="list-group-item list-group-item-action"
+                    data-bs-toggle="collapse"
+                    role="button"
+                    href="#collapse-p-${name}-${i}"
+                ></button>"`);
+
+                $pli.text(`@${name}`);
+
+                let $pcps = $(`<div class="collapse multi-collapse" 
+                id="collapse-p-${name}-${i}"></div>`)
+
+                $pcps.html(`
+                    <ul class="list-group">
+                        <li class="list-group-item">Nome: ${p_info.name}</li>
+                        <li class="list-group-item">APs
+                            <ul class="list-group">
+                                <li class="list-group-item">FCA: ${p_info.atts.FCA}</li>
+                                <li class="list-group-item">AGL: ${p_info.atts.AGL}</li>
+                                <li class="list-group-item">VTI: ${p_info.atts.VTL}</li>
+                                <li class="list-group-item">INT: ${p_info.atts.INT}</li>
+                                <li class="list-group-item">SCL: ${p_info.atts.SCL}</li>
+                            </ul>    
+                        </li>
+                        <li class="list-group-item">Perícias
+                            <ul class="list-group">
+                                <li class="list-group-item">Persuasão: ${p_info.skills.persuasion}</li>
+                                <li class="list-group-item">Intimidação: ${p_info.skills.intimidation}</li>
+                                <li class="list-group-item">Barganha: ${p_info.skills.barter}</li>
+                                
+                                <li class="list-group-item">Acampar: ${p_info.skills.camping}</li>
+                                <li class="list-group-item">Caçar: ${p_info.skills.hunting}</li>
+                                <li class="list-group-item">Sobrevivência: ${p_info.skills.survival}</li>
+
+                                <li class="list-group-item">Lâminas: ${p_info.skills.blade}</li>
+                                <li class="list-group-item">Contundentes: ${p_info.skills.blunt}</li>
+                                <li class="list-group-item">Longa distância: ${p_info.skills.ranged}</li>
+                                <li class="list-group-item">Feitiçaria: ${p_info.skills.spellcasting}</li>
+
+                                <li class="list-group-item">Arm. Leve: ${p_info.skills.light_armor}</li>
+                                <li class="list-group-item">Arm. Pesada: ${p_info.skills.heavy_armor}</li>
+
+                                <li class="list-group-item">Primeiros-Socorros: ${p_info.skills.first_aid}</li>
+                                <li class="list-group-item">Restauração: ${p_info.skills.restoration}</li>
+                            </ul>
+                        </li>
+                    </ul>
+                `)
+
+                $pl.append($pli, $pcps);
+            })
+
+            $el.append($pl);
+        })
+    })
+
+    socket.on('next-conflict', (checkinfo)=>{
+        disableAllButtons();
+        turn = (turn + 1) % player_info.length;
+        logConflict(checkinfo.conflict, checkinfo.passed);
+    })
+
+    function logConflict(conflict, passed){
+        let is_my_turn = my_turn === turn;
+        if(passed !== null)
+        {
+            let $alert_prev = $(`
+                <div
+                    class="alert 
+                    alert-${(passed) ? 'success' : 'danger'} mt-3"
+                ></div>
+            `)
+
+            $alert_prev.text(
+                (passed) 
+                ? "Conseguiu!"
+                : "Falhou..."
+            )
+
+            $game_logs.append($alert_prev);
+        }
+
+        let transl_skill_name = {
+            persuasion: "Persuasão",
+            intimidation: "Intimidação",
+            barter: "Barganha",
+            camping: "Acampar",
+            hunting: "Caçar",
+            survival: "Sobrevivência",
+            blade: 'Lâminas',
+            blunt: 'Contundentes',
+            ranged: 'Longa Distância',
+            light_armor: 'Armadura Leve',
+            heavy_armor: 'Armadura Pesada',
+            spellcasting: 'Feitiçaria',
+            first_aid: 'Primeiros Socorros',
+            restoration: 'Restauração',
+        }
+
+
+        let $log_card = $('<div class="card"></div>');
+        let $log_desc = $('<p class="card-body"></p>');
+
+        $log_desc.text(conflict.scene);
+        $log_card.append($log_desc);
+        
+        if(is_my_turn)
+        {
+            let $log_scs = $('<ul class="list-group list-group-flush list-group-item-success"></ul>')
+            let $log_pacs = $('<ul class="list-group list-group-flush list-group-item-success"></ul>')
+            conflict.skillchecks.forEach((sc, i)=>{
+                let $sc = $(
+                    `<button 
+                        type="button"
+                        class="list-group-item list-group-item-action disable-me"
+                        onclick="chooseSkill(${i})"
+                    ></button>`
+                );
+                $sc.text(`\t${sc.desc} [${transl_skill_name[sc.skill]}; dif.: ${sc.diff}]`);
+                $log_scs.append($sc);
+            });
+
+            $log_card.append($log_scs);
+
+
+            conflict.pachecks.forEach((pac, i)=>{
+                let $pac = $(
+                    `<button 
+                        type="button"
+                        class="list-group-item list-group-item-action disable-me"
+                        onclick="choosePA(${i})"
+                    ></button>`
+                );
+                $pac.text(`${pac.desc} [${pac.pa}; dif.: ${pac.diff}]`);
+                $log_pacs.append($pac);
+            });
+            $log_card.append($log_pacs);
+        }
+        else 
+        {
+            let $log_warn = $('<div class="card-body bg-danger text-light"></div>')
+
+            $log_warn.html(`<div class="alert alert-info>"Esperando a vez de outro jogador...</div>`)
+            $log_card.append($log_warn)
+        }
+
+        $game_logs.append($log_card);
+    }
+
+    function chooseSkill(n) {
+        socket.emit('skill-check', {sc_idx: n, player_name: chari.uname});
+    }
+
+    function choosePA(n) {
+        socket.emit('pa-check', {pac_idx: n, player_name: chari.uname});
+    }
+
+    function disableAllButtons()
+    {
+        $(`button.disable-me`).each((i, e)=>{
+            $el = $(e);
+            $el.attr('disabled', '');
+        });
+    }
+</script>

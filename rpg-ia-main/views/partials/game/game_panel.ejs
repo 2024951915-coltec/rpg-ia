@@ -1,0 +1,195 @@
+<div class="d-none" id="game-panel">
+    <div>
+        <div class="d-none d-md-block card rpg-card mb-3" id="pc-player-panel">
+            <!--PC-->
+            <div class="card-header">
+            <h2 class="h5 mb-0">Ficha do grupo</h2>
+            </div>
+
+            <div class="card-body overflow-auto player-list list-group-flush"></div>
+        </div>
+
+        <div class="d-md-none mb-3">
+            <!--Mobile-->
+            <button class="btn btn-outline-rpg mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-mobile">
+                Jogadores
+            </button>
+            <div class="collapse multi-collapse" id="collapse-mobile">
+                <div class="card-body overflow-auto player-list list-group-flush"></div>
+            </div>
+        </div>
+
+        <div class="alert alert-info my-3" role="status">
+            <strong>Mestre de jogo em ação:</strong> a IA pode levar alguns instantes para preparar a próxima cena. Aguarde a atualização da aventura.
+        </div>
+    </div>
+
+    <div class="card rpg-card w-100">
+        <div class="card-header">
+            <div><p class="rpg-eyebrow mb-1">Etapa 3 · A aventura</p><h2 class="h4 mb-0">Diário da campanha</h2></div>
+        </div>
+        <div class="card-body overflow-auto" id="game-logs" aria-live="polite"></div>
+    </div>
+</div>
+
+
+<script>
+    let turn = 0;
+    let $game_panel = $('#game-panel');
+    let $game_logs = $('#game-logs');
+    let has_started = false;
+
+
+    socket.on('game-started', (conflict)=>{;
+        if(has_started) return;
+
+        $game_panel.removeClass('d-none');
+        $game_panel.addClass('d-md-flex flex-column flex-md-row');
+        $wait_room.addClass('d-none');
+        logConflict(conflict, null);
+        has_started = true;
+
+        $(`div.player-list`).each((i, e)=>{
+            $el = $(e);
+
+
+            let $pl = $('<ol class="list-group list-group-flush"></ol>')
+
+            player_names.forEach((name, pi)=>{
+                let p_info = player_info[pi];
+
+                const collapseId = `collapse-p-${pi}-${i}`;
+                let $pli = $('<button class="list-group-item list-group-item-action" type="button" data-bs-toggle="collapse" role="button"></button>');
+                $pli.attr('data-bs-target', `#${collapseId}`);
+
+                $pli.text(`@${name}`);
+
+                let $pcps = $('<div class="collapse multi-collapse"></div>').attr('id', collapseId);
+
+                const $details = $('<div class="p-2 small"></div>');
+                $('<div class="fw-bold mb-2"></div>').text(p_info.name).appendTo($details);
+                $('<div class="rpg-muted"></div>').text(`FCA ${p_info.atts.FCA} · AGL ${p_info.atts.AGL} · VTL ${p_info.atts.VTL} · INT ${p_info.atts.INT} · SCL ${p_info.atts.SCL}`).appendTo($details);
+                const skillNames = { persuasion: 'Persuasão', intimidation: 'Intimidação', barter: 'Barganha', camping: 'Acampar', hunting: 'Caça', survival: 'Sobrevivência', blade: 'Lâminas', blunt: 'Contundentes', ranged: 'Longo alcance', light_armor: 'Armadura leve', heavy_armor: 'Armadura pesada', spellcasting: 'Feitiçaria', first_aid: 'Primeiros-socorros', restoration: 'Restauração' };
+                const $skills = $('<div class="mt-2 d-flex flex-wrap gap-1"></div>');
+                Object.keys(skillNames).forEach((skill) => {
+                    $('<span class="badge text-bg-secondary"></span>').text(`${skillNames[skill]} ${p_info.skills[skill]}`).appendTo($skills);
+                });
+                $details.append($skills);
+                $pcps.append($details);
+
+                $pl.append($pli, $pcps);
+            })
+
+            $el.append($pl);
+        })
+    })
+
+    socket.on('next-conflict', (checkinfo)=>{
+        disableAllButtons();
+        turn = (turn + 1) % player_info.length;
+        logConflict(checkinfo.conflict, checkinfo.passed);
+    })
+
+    function logConflict(conflict, passed){
+        let is_my_turn = my_turn === turn;
+        if(passed !== null)
+        {
+            let $alert_prev = $(`
+                <div
+                    class="alert 
+                    alert-${(passed) ? 'success' : 'danger'} mt-3"
+                ></div>
+            `)
+
+            $alert_prev.text(
+                (passed) 
+                ? "Conseguiu!"
+                : "Falhou..."
+            )
+
+            $game_logs.append($alert_prev);
+        }
+
+        let transl_skill_name = {
+            persuasion: "Persuasão",
+            intimidation: "Intimidação",
+            barter: "Barganha",
+            camping: "Acampar",
+            hunting: "Caçar",
+            survival: "Sobrevivência",
+            blade: 'Lâminas',
+            blunt: 'Contundentes',
+            ranged: 'Longa Distância',
+            light_armor: 'Armadura Leve',
+            heavy_armor: 'Armadura Pesada',
+            spellcasting: 'Feitiçaria',
+            first_aid: 'Primeiros Socorros',
+            restoration: 'Restauração',
+        }
+
+
+        let $log_card = $('<div class="card"></div>');
+        let $log_desc = $('<p class="card-body"></p>');
+
+        $log_desc.text(conflict.scene);
+        $log_card.append($log_desc);
+        
+        if(is_my_turn)
+        {
+            let $log_scs = $('<ul class="list-group list-group-flush list-group-item-success"></ul>')
+            let $log_pacs = $('<ul class="list-group list-group-flush list-group-item-success"></ul>')
+            conflict.skillchecks.forEach((sc, i)=>{
+                let $sc = $(
+                    `<button 
+                        type="button"
+                        class="list-group-item list-group-item-action disable-me"
+                        onclick="chooseSkill(${i})"
+                    ></button>`
+                );
+                $sc.text(`\t${sc.desc} [${transl_skill_name[sc.skill]}; dif.: ${sc.diff}]`);
+                $log_scs.append($sc);
+            });
+
+            $log_card.append($log_scs);
+
+
+            conflict.pachecks.forEach((pac, i)=>{
+                let $pac = $(
+                    `<button 
+                        type="button"
+                        class="list-group-item list-group-item-action disable-me"
+                        onclick="choosePA(${i})"
+                    ></button>`
+                );
+                $pac.text(`${pac.desc} [${pac.pa}; dif.: ${pac.diff}]`);
+                $log_pacs.append($pac);
+            });
+            $log_card.append($log_pacs);
+        }
+        else 
+        {
+            let $log_warn = $('<div class="card-body bg-danger text-light"></div>')
+
+            $log_warn.text('Esperando a vez de outro jogador...')
+            $log_card.append($log_warn)
+        }
+
+        $game_logs.append($log_card);
+    }
+
+    function chooseSkill(n) {
+        socket.emit('skill-check', {sc_idx: n, player_name: chari.uname});
+    }
+
+    function choosePA(n) {
+        socket.emit('pa-check', {pac_idx: n, player_name: chari.uname});
+    }
+
+    function disableAllButtons()
+    {
+        $(`button.disable-me`).each((i, e)=>{
+            $el = $(e);
+            $el.attr('disabled', '');
+        });
+    }
+</script>

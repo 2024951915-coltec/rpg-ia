@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-bs-theme="dark">
+<head>
+    <title>Boulderspire RPG — Sala <%= ROOMID %></title>
+    <script>const roomID = <%- JSON.stringify(ROOMID) %>;</script>
+    <%- include('libs/socketio') %>
+    <%- include('libs/bootstrap') %>
+    <%- include('libs/jquery') %>
+    <%- include('include/browser-elements') %>
+    <%- include('include/app-assets') %>
+</head>
+<body class="rpg-body">
+    <%- include('partials/header') %>
+    <main class="container-fluid container-xxl rpg-main">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+            <div>
+                <p class="rpg-eyebrow mb-1">Sua próxima aventura começa aqui</p>
+                <h1 class="rpg-title h2 mb-0">Sala de jogo</h1>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <span id="connection-status" class="rpg-status" role="status">Conectando...</span>
+                <a href="/home" class="btn btn-sm btn-outline-rpg">Voltar ao início</a>
+            </div>
+        </div>
+        <%- include('partials/game/char_creation') %>
+        <%- include('partials/game/wait_room') %>
+        <%- include('partials/game/game_panel') %>
+    </main>
+    <%- include('partials/footer') %>
+    <script>
+        const connectionStatus = document.querySelector('#connection-status');
+        socket.on('connect', () => {
+            connectionStatus.textContent = 'Conectado';
+            connectionStatus.classList.remove('text-danger');
+        });
+        socket.on('disconnect', () => {
+            connectionStatus.textContent = 'Conexão perdida — tentando reconectar';
+            connectionStatus.classList.add('text-danger');
+        });
+        socket.on('connect_error', () => {
+            connectionStatus.textContent = 'Falha na conexão';
+            connectionStatus.classList.add('text-danger');
+        });
+    </script>
+</body>
+</html>

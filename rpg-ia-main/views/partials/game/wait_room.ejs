@@ -1,0 +1,70 @@
+<div class="card rpg-card shadow-lg d-none" id="wait-room">
+    <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-3">
+        <div>
+            <p class="rpg-eyebrow mb-1">Etapa 2 · Reúna o grupo</p>
+            <h1 class="rpg-title h2 mb-0">Sala de espera</h1>
+        </div>
+        <div class="text-md-end">
+            <div class="small rpg-muted">Código para convidar jogadores</div>
+            <div class="rpg-room-code" data-room-code><%= ROOMID %></div>
+            <button type="button" class="btn btn-sm btn-outline-rpg mt-1" data-copy-room>Copiar código</button>
+        </div>
+    </div>
+    <div class="card-body px-md-4">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+            <h2 class="h5 mb-0">Jogadores conectados</h2>
+            <span class="badge text-bg-secondary" id="player-count">Aguardando jogadores</span>
+        </div>
+        <ol class="list-group mb-3" id="guest-list" aria-live="polite"></ol>
+        <p id="last-guest" class="rpg-muted mb-0" aria-live="polite">Compartilhe o código da sala para que seus amigos possam entrar.</p>
+    </div>
+    <div class="card-footer d-flex flex-wrap justify-content-between align-items-center gap-2 px-md-4 py-3">
+        <a href="/home" class="btn btn-outline-secondary">Sair da sala</a>
+        <button class="btn btn-rpg" onclick="startGame()">Iniciar aventura</button>
+    </div>
+</div>
+
+<script>
+    let player_names = [];
+    let player_info = [];
+    let my_turn;
+    let $wait_room = $('#wait-room');
+    let $guest_list = $('#guest-list');
+    let $last_guest = $('#last-guest');
+
+    function updatePlayerCount() {
+        $('#player-count').text(player_names.length + (player_names.length === 1 ? ' jogador' : ' jogadores'));
+    }
+
+    socket.on('created-char', (info)=>{
+        $wait_room.removeClass('d-none');
+        $guest_list.empty();
+        info.player_names.forEach((player, i)=>{
+            let $guest_list_item = $('<li class="list-group-item d-flex align-items-center gap-2"></li>');
+            $('<span class="badge text-bg-secondary"></span>').text(i + 1).appendTo($guest_list_item);
+            $('<span></span>').text(player).appendTo($guest_list_item);
+            if(player === info.username) $('<span class="badge text-bg-success ms-auto">Você</span>').appendTo($guest_list_item);
+            $guest_list.append($guest_list_item);
+            if(player === info.username) my_turn = i;
+        });
+        player_info = info.player_info;
+        player_names = info.player_names;
+        updatePlayerCount();
+    });
+
+    socket.on('player-joined', (info)=>{
+        $last_guest.text(info.username + ' entrou na sala!');
+        let $guest_list_item = $('<li class="list-group-item d-flex align-items-center gap-2"></li>');
+        $('<span class="badge text-bg-secondary"></span>').text(player_names.length + 1).appendTo($guest_list_item);
+        $('<span></span>').text(info.username).appendTo($guest_list_item);
+        $guest_list.append($guest_list_item);
+        player_info.push(info.char);
+        player_names.push(info.username);
+        updatePlayerCount();
+    });
+
+    function startGame() {
+        if (player_names.length === 0) return;
+        socket.emit('start-game');
+    }
+</script>

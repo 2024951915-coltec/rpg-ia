@@ -1,0 +1,27 @@
+/* esse arquivo adiciona algumas configurações de visualização pelo navegador*/
+
+/* faz o elemento HTML mudar o formato do ponteiro para indicar que ele é clicável */
+[clickable] {
+    cursor: pointer;
+    position: relative;
+    top: 0;
+    transition: top ease-in 300ms
+}
+
+[scrollable] {
+    overflow-y: scroll;
+}
+
+[clickable]:hover {
+    top: -0.3em;
+}
+
+textarea[monospace] {
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 600;
+}
+
+input[type=text][monospace] {
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 600;
+}

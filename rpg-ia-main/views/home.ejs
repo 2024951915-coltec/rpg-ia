@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-bs-theme="dark">
+<head>
+    <title>Boulderspire RPG — Início</title>
+    <%- include('libs/bootstrap') %>
+    <%- include('libs/jquery') %>
+    <%- include('include/browser-elements') %>
+    <%- include('include/app-assets') %>
+</head>
+<body class="rpg-body">
+    <%- include('partials/header') %>
+    <main class="container rpg-main">
+        <section class="text-center mb-5">
+            <p class="rpg-eyebrow mb-2">Uma aventura guiada por inteligência artificial</p>
+            <h1 class="display-2 rpg-title">Boulderspire</h1>
+            <p class="rpg-eyebrow">RPG de fantasia e escolhas</p>
+            <p class="rpg-subtitle mx-auto mt-3">Reúna seu grupo, crie personagens e descubra até onde suas decisões podem levar a história.</p>
+        </section>
+
+        <section class="card rpg-card mx-auto" style="max-width: 720px;">
+            <div class="card-body">
+                <div id="identity-step">
+                    <p class="rpg-eyebrow">Antes de começar</p>
+                    <h2 class="rpg-section-title h3">Como devemos chamar você?</h2>
+                    <p class="rpg-muted">Informe seu nome de jogador para entrar na aventura. Esse nome será usado para identificar você na sala.</p>
+                    <div class="row g-2 align-items-end">
+                        <div class="col-md">
+                            <label for="player-name" class="form-label">Nome de jogador</label>
+                            <input id="player-name" class="form-control form-control-lg" maxlength="24" minlength="2" required autocomplete="nickname" placeholder="Ex.: Arthur">
+                        </div>
+                        <div class="col-md-auto">
+                            <button id="continue-to-campaign" class="btn btn-rpg btn-lg w-100" type="button">Continuar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="campaign-actions" class="d-none">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+                        <div>
+                            <p class="rpg-eyebrow mb-1">Bem-vindo à aventura</p>
+                            <h2 class="h4 mb-0">Escolha como jogar</h2>
+                        </div>
+                        <span class="badge text-bg-secondary">Jogador: <span id="active-player-name"></span></span>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <a href="/game/host" class="card rpg-card rpg-action-card h-100 text-decoration-none">
+                                <div class="card-body d-flex flex-column">
+                                    <div class="rpg-action-icon mb-3">✦</div>
+                                    <h3 class="h4">Criar campanha</h3>
+                                    <p class="rpg-muted mb-0">Inicie um novo mundo, defina sua premissa e convide seus amigos.</p>
+                                </div>
+                                <div class="card-footer text-end"><span class="btn btn-outline-rpg">Criar sala →</span></div>
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card rpg-card rpg-action-card h-100">
+                                <div class="card-body">
+                                    <div class="rpg-action-icon mb-3">⚔</div>
+                                    <h3 class="h4">Entrar em campanha</h3>
+                                    <p class="rpg-muted">Já tem um código de sala? Informe-o para encontrar seu grupo.</p>
+                                    <form id="join-campaign-form" method="GET" action="/game/join">
+                                        <label for="room" class="form-label">Código da sala</label>
+                                        <div class="input-group">
+                                            <input class="form-control text-uppercase" name="room" id="room" type="text" pattern="[a-fA-F0-9]{6}" maxlength="6" minlength="6" placeholder="A1B2C3" required autocomplete="off" spellcheck="false">
+                                            <button class="btn btn-rpg" type="submit">Entrar</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-link rpg-muted mt-3 px-0" id="change-player" onclick="sessionStorage.removeItem('boulderspire.playerName'); location.reload();">Trocar nome de jogador</button>
+                </div>
+            </div>
+        </section>
+        <p class="text-center rpg-muted small mt-4">A história é construída em grupo. Suas escolhas movem a aventura.</p>
+    </main>
+    <%- include('partials/footer') %>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const savedName = sessionStorage.getItem('boulderspire.playerName');
+            if (savedName) {
+                document.querySelector('#identity-step').classList.add('d-none');
+                document.querySelector('#campaign-actions').classList.remove('d-none');
+                document.querySelector('#active-player-name').textContent = savedName;
+            }
+            document.querySelector('#continue-to-campaign').addEventListener('click', function () {
+                const name = document.querySelector('#player-name').value.trim();
+                document.querySelector('#active-player-name').textContent = name;
+            });
+        });
+    </script>
+</body>
+</html>

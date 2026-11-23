@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-bs-theme="dark">
+    <head>
+        <title>Sala não encontrada!</title>
+        <%- include('../libs/bootstrap.ejs') %>
+    </head>
+
+    <body class="bg-secondary d-flex justify-content-center align-items-center">
+        <main class="card shadow mt-5">
+            <div class="card-header">
+                <h1>Sala não foi encontrada!</h1>
+            </div>
+            <div class="card-body">
+                <p>A sala <code>#<%= ID %></code> não existe</p>
+                <a href="/home">Retornar?</a>
+            </div>
+
+            <div class="card-footer">
+                <small class="text-secondary">Retornou erro 404</small>
+            </div>
+        </main>
+    </body>
+</html>

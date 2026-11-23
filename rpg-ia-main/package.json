@@ -1,0 +1,37 @@
+{
+  "name": "boulderspire-rpg",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "node node_modules/typescript/bin/tsc",
+    "prestart": "node node_modules/typescript/bin/tsc",
+    "start": "node dist/index.js",
+    "install-all": "npm install",
+    "test": "node --test tests/*.test.mjs",
+    "pretest": "node node_modules/typescript/bin/tsc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@google/genai": "^2.32.0",
+    "@types/express": "^5.0.6",
+    "bcryptjs": "^3.0.3",
+    "dotenv": "^18.0.10",
+    "ejs": "^7.0.2",
+    "express": "^5.3.0",
+    "express-session": "^1.19.0",
+    "socket.io": "^4.8.4",
+    "bootstrap": "5.3.8",
+    "jquery": "3.7.1"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "socket.io-client": "^4.8.1"
+  },
+  "engines": {
+    "node": ">=22.15.0"
+  }
+}

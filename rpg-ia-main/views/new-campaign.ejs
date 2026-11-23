@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-bs-theme="dark">
+<head>
+    <title>Boulderspire RPG — Nova campanha</title>
+    <%- include('libs/bootstrap') %>
+    <%- include('libs/jquery') %>
+    <%- include('include/browser-elements') %>
+    <%- include('include/app-assets') %>
+</head>
+<body class="rpg-body">
+    <%- include('partials/header') %>
+    <main class="container rpg-main">
+        <div class="mb-4">
+            <a href="/home" class="btn btn-sm btn-outline-rpg">← Voltar ao início</a>
+        </div>
+        <section class="card rpg-card mx-auto" style="max-width: 760px;">
+            <div class="card-header">
+                <p class="rpg-eyebrow mb-1">Preparação da aventura</p>
+                <h1 class="rpg-title h2 mb-0">Criar nova campanha</h1>
+            </div>
+            <div class="card-body">
+                <p class="rpg-muted mb-4">Dê um nome à sua campanha e descreva o cenário que servirá de ponto de partida para o mestre de jogo.</p>
+                <form id="new-campaign-form" method="POST" action="/game/host">
+                    <div class="mb-4">
+                        <label for="name" class="form-label">Nome da campanha</label>
+                        <input name="name" id="name" type="text" class="form-control form-control-lg" maxlength="60" required placeholder="Ex.: As ruínas de Boulderspire">
+                    </div>
+                    <div class="mb-4">
+                        <label for="desc" class="form-label">Descrição da campanha</label>
+                        <textarea name="desc" id="desc" class="form-control" rows="7" maxlength="3000" required placeholder="Descreva o mundo, o conflito inicial, o clima da aventura e qualquer detalhe importante..."></textarea>
+                        <div class="form-text rpg-muted">Uma descrição mais completa ajuda a estabelecer o contexto da aventura.</div>
+                    </div>
+                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+                        <span class="rpg-status">A sala será criada ao confirmar</span>
+                        <button class="btn btn-rpg btn-lg" type="submit">Criar sala e continuar</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+    <%- include('partials/footer') %>
+</body>
+</html>

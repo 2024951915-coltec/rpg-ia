@@ -6,7 +6,7 @@ dotenv.config({quiet: true});
 const AI_API_KEY: string = process.env.GEMINI_API_KEY ?? '';
 
 const ai: GoogleGenAI = new GoogleGenAI({
-    apiKey: AI_API_KEY
+    apiKey: AI_API_KEY, httpOptions: { timeout: 60000 }
 })
 
 import { type IConflict, type IPACheck, type ISkillCheck, ValidStats} from  './resolution.js'
@@ -15,11 +15,11 @@ import { type IContext } from "./rooms.js";
 
 async function createConflict (prompt: string): Promise<[IConflict, IContext]> {
     const response = await ai.models.generateContent({
-        model: 'gemini-3.5-flash-lite',
+        model: process.env.GEMINI_TEXT_MODEL || 'gemini-3.5-flash-lite',
         contents: prompt,
         config: {
             responseMimeType: 'application/json',
-            responseJsonSchema: {
+            responseSchema: {
                 type: Type.OBJECT,
                 properties: {
                     scene: {
@@ -139,11 +139,11 @@ const GameMaster: IGameMaster = {
 
     test: async function (): Promise<boolean> {
         const response = await ai.models.generateContent({
-            model: 'gemini-3.5-flash-lite',
+            model: process.env.GEMINI_TEXT_MODEL || 'gemini-3.5-flash-lite',
             contents: 'Are you functional?',
             config: {
                 responseMimeType: 'application/json',
-                responseJsonSchema: {
+                responseSchema: {
                     type: Type.OBJECT,
                     properties: {
                         functional: {type: Type.BOOLEAN, description:"If you got here, it's probably TRUE"},
@@ -170,7 +170,7 @@ const GameMaster: IGameMaster = {
             This is the description of the RPG world you'll play in:
             ${world_desc}
 
-            Make a simple challenge with low difficulty levels.
+            Write only in-world narrative in the scene field, without headings, narrator labels or restating the prompt. Make a simple challenge with low difficulty levels.
         `);
 
         return ret;
@@ -189,7 +189,7 @@ const GameMaster: IGameMaster = {
             One of your players, ${context.playerTested}, attempted to do this:
             ${context.attemptedCheck}; ${conflict_result_message}
 
-            You must now create a scene, describing what happens next.
+            Write only in-world narrative without headings, narrator labels or restating the prompt. You must now create a scene, describing what happens next.
         `);
 
         return ret;
